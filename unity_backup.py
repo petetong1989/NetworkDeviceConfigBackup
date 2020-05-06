@@ -4,7 +4,7 @@
 # @Email: pete19890813@gmail.com
 
 '''
-目前该脚本的原理为通过SSH登陆设备设定相关参数，第一次使用SCP或API尝试备份，
+目前该脚本的原理为通过SSH登陆设备设定相关参数，第一次使用SCP，SFTP或API尝试备份，
 失败后第二次尝试FTP备份(并非所有设备都会尝试FTP备份，视设备支持情况而定)
 1、通过函数 HCI 展现交互式界面；
 2、通过调用函数 unity_process 函数完成备份过程
@@ -13,11 +13,11 @@
 注意事项：
 # 未对 telnet 进行支持
 # 目前支持：
-    思科设备(当前支持思科IOS，WLC，NEXUS，ASA以及UCS FI)，
-    F5，
-    博科FC交换机
+    思科设备(思科IOS，WLC，NEXUS，ASA以及UCS FI)，
+    F5(测试型号F5 BIGIP 3900，版本号11.5.1)，
+    博科FC交换机(测试型号DS-300， 版本号Fabric OS v6.3.2b)
 
-Useage:...
+Useage:...新人通常不喜欢写过多注释:p
 '''
 
 from time import (time, sleep, strftime, localtime)
