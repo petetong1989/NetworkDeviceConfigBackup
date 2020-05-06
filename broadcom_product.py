@@ -3,7 +3,7 @@
 # @Author: Pete.Zhangbin
 # @Email: pete19890813@gmail.com
 '''
-SCRIPT DESCRIPTION
+Broadcom Product Class
 '''
 
 
