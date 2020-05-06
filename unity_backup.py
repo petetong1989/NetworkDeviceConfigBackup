@@ -11,7 +11,7 @@
 
 注意事项：
 # 目前未对 telnet 进行支持
-# 目前仅支持思科设备(当前支持思科IOS，WLC，NEXUS，ASA以及UCS FI)
+# 目前支持思科设备(当前支持思科IOS，WLC，NEXUS，ASA以及UCS FI)、F5以及博科FC交换机
 
 Useage:
 '''
