@@ -28,13 +28,3 @@ def multiple_scan(network, port=22):
         if obj.get() == 0:
             active_ip.append(ip)
     return active_ip
-
-
-if __name__ == "__main__":
-    # result = scan_func('10.21.106.2', '22')
-    # if result == 0:
-    #     print('端口 ‘22’ 通讯正常！')
-    # else:
-    #     print('端口 ‘22’ 通讯有问题！')
-    result = multiple_scan("10.21.107.0/24")
-    print(result)
