@@ -6,14 +6,18 @@
 '''
 目前该脚本的原理为通过SSH登陆设备设定相关参数，第一次使用SCP或API尝试备份，
 失败后第二次尝试FTP备份(并非所有设备都会尝试FTP备份，视设备支持情况而定)
-1、通过函数 interact_view 展现交互式界面；
-2、通过调用函数 unity_process 函数完成整个备份
+1、通过函数 HCI 展现交互式界面；
+2、通过调用函数 unity_process 函数完成备份过程
+3、通过调用函数 backup_fuc 来执行备份操作
 
 注意事项：
-# 目前未对 telnet 进行支持
-# 目前支持思科设备(当前支持思科IOS，WLC，NEXUS，ASA以及UCS FI)、F5以及博科FC交换机
+# 未对 telnet 进行支持
+# 目前支持：
+    思科设备(当前支持思科IOS，WLC，NEXUS，ASA以及UCS FI)，
+    F5，
+    博科FC交换机
 
-Useage:
+Useage:...
 '''
 
 from time import (time, sleep, strftime, localtime)
