@@ -228,7 +228,7 @@ class CiscoDevice(ConnProfile):
                 ftpuser, ftppass, FTPaddress, filename, 'all-configuration'))
         self.addionalPassReuqire(ftppass)
         self.shell.send('commit-buffer\n')
-        sleep(1); self.shell.send("show fsm status | grep 'Previous Status'\n")
+        sleep(1.7); self.shell.send("show fsm status | grep 'Previous Status'\n")
         recv_str = recv_expect(self.shell, r'Backup\sUpload|Backup\sSuccess')
         if recv_str.find('Backup Success') > -1:
             return 'BackupSuccess'

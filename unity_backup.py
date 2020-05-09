@@ -93,7 +93,7 @@ class unity_backup:
             if os.name == 'nt': os.system('cls')
             else: os.system('clear')    
             return 'conintue'
-        if re.match(r'(\d{1,3}\.){3}\d{1,3}$', IP):
+        if re.match(r'(\d{1,3}\.){3}\d{1,3}($|/\d{1,2}$)', IP):
             self.manufactor = input("该设备所属厂商 > ").upper()
             self.username = input("用户名: ")
             self.password = getpass.getpass("密  码: ")
@@ -111,9 +111,9 @@ class unity_backup:
             raise ValueError('某个给定的选项类型错误，请更正!')
         for IP in IPs:
             Pattern = r'(2[0-5][0-4]|1\d\d|\d\d|[0-9])'
-            type_A = r'10\.{0}\.{0}\.{0}'.format(Pattern)
-            type_B = r'172\.([1[6-9]|2\d|31)\.{0}\.{0}'.format(Pattern)
-            type_C = r'192\.168\.{0}\.{0}'.format(Pattern)
+            type_A = r'10\.{0}\.{0}\.{0}/?\d?\d?'.format(Pattern)
+            type_B = r'172\.([1[6-9]|2\d|31)\.{0}\.{0}/?\d?\d?'.format(Pattern)
+            type_C = r'192\.168\.{0}\.{0}/?\d?\d?'.format(Pattern)
             MatchIP = re.search(
                 r'{0}|{1}|{2}'.format(type_A, type_B, type_C), IP).group()
             yield MatchIP
@@ -200,6 +200,7 @@ class unity_backup:
                     self.Broadcom = broadcomDevice(host, self.username, self.password)
                     self.Broadcom_FTP_backup(host)
             except Exception as e:
+                # raise Exception
                 error('{!r}备份失败, 错误信息：{}'.format(host, e.args[0]))
                 continue
         
