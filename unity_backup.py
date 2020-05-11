@@ -187,10 +187,13 @@ class unity_backup:
                 if self.manufactor == "CISCO":
                     self.Cisco = CiscoDevice(host, self.username, self.password)
                     try:
-                        self.Cisco_SCP_backup(host)
+                        if self.Cisco.Product == 'Cisco UCSM':
+                            self.Cisco.UCSAPIBackup('{}_{}_{}.txt'.format(
+                                self.Cisco.hostname, host, timestamp))
+                        else: self.Cisco_SCP_backup(host)
                         info('设备{!r}备份成功!'.format(host))
                     except Exception as e:
-                        debug('尝试SCP或API备份失败，开始尝试FTP备份。')
+                        warn('尝试SCP或API备份失败，开始尝试FTP备份。')
                         self.Cisco_FTP_backup(host)
                         continue
                 elif self.manufactor == 'F5':
