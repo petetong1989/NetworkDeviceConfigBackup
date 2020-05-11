@@ -138,7 +138,7 @@ class unity_backup:
         self.FTP_Proc = Process(target=FTP.EnableFTPServer, args='')
         self.FTP_Proc.start()
 
-    def Cisco_SCP_backup(self, host):
+    def Cisco_SCPAPI_backup(self, host):
         if self.Cisco.Product == 'Cisco UCSM':
             self.Cisco.UCSAPIBackup('{0}_{1}_{2}.xml'.format(
             self.Cisco.hostname, host, timestamp))
@@ -187,12 +187,10 @@ class unity_backup:
                 if self.manufactor == "CISCO":
                     self.Cisco = CiscoDevice(host, self.username, self.password)
                     try:
-                        if self.Cisco.Product == 'Cisco UCSM':
-                            self.Cisco.UCSAPIBackup('{}_{}_{}.txt'.format(
-                                self.Cisco.hostname, host, timestamp))
-                        else: self.Cisco_SCP_backup(host)
+                        self.Cisco_SCPAPI_backup(host)
                         info('设备{!r}备份成功!'.format(host))
                     except Exception as e:
+                        # raise Exception(e)
                         warn('尝试SCP或API备份失败，开始尝试FTP备份。')
                         self.Cisco_FTP_backup(host)
                         continue

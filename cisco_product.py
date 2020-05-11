@@ -176,9 +176,12 @@ class CiscoDevice(ConnProfile):
         self.SCPFunc(enable=True)
         scp_connection = SCPClient(
             self.sshconn.get_transport(), socket_timeout=20)
-        sleep(0.2)
+        sleep(0.5)
         try:
             scp_connection.get(f'system:{source_file}', dest_file)
+        # except Exception as e:
+        #     print("Exeption is captured!")
+        #     raise Exception(e)
         finally:
             self.SCPFunc(enable=False)
             shellrecv(self.shell)

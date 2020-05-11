@@ -39,7 +39,7 @@ def shellrecv(shell, delay=3):
             if shell.recv_ready():
                 continue
             break
-    # print(''.join(recv_value))
+    print(''.join(recv_value))
     if recv_value:
         return ''.join(recv_value)
 
