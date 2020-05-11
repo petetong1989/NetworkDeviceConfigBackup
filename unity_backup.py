@@ -217,4 +217,4 @@ if __name__ == "__main__":
         Backup.FTP_Proc.terminate()
         raise Exception(e)
     except KeyboardInterrupt:
-        error('程序被使用{!r}强制退出！'.format('Ctrl+C'))
+        error("程序被使用'Ctrl+C'强制退出！")
