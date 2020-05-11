@@ -188,7 +188,6 @@ class unity_backup:
                     self.Cisco = CiscoDevice(host, self.username, self.password)
                     try:
                         self.Cisco_SCPAPI_backup(host)
-                        info('设备{!r}备份成功!'.format(host))
                     except Exception as e:
                         # raise Exception(e)
                         warn('尝试SCP或API备份失败，开始尝试FTP备份。')
