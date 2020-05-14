@@ -49,11 +49,10 @@ def recv_expect(shell, expect, *, delay=180):
     while True:
         recv = shellrecv(shell)
         if not recv:
-            continue
+            if time() - time_now < float(delay):
+                continue
+            else: return None
         elif re.search(r'{0}'.format(expect), recv):
             recv_list.append(recv)
             return ''.join(recv_list)
-        elif time() - time_now < float(delay):
-            recv_list.append(recv)
-        else:
-            return None
+        else: recv_list.append(recv)
