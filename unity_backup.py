@@ -6,7 +6,7 @@
 '''
 目前该脚本的原理为通过SSH登陆设备设定相关参数，第一次使用SCP，SFTP或API尝试备份，
 失败后第二次尝试FTP备份(并非所有设备都会尝试FTP备份，视设备支持情况而定)
-1、通过函数 HCI 展现交互式界面；
+1、通过函数 main_interact 展现交互式界面；
 2、通过调用函数 unity_process 函数完成备份过程
 3、通过调用函数 backup_fuc 来执行备份操作
 
@@ -57,34 +57,26 @@ class unity_backup:
     
     def unity_process(self):
         while True:
-            get_hosts = self.hosts if self.hosts else self.HCI()
-            if get_hosts == 'break':
-                break
-            elif get_hosts == 'conintue':
-                continue
+            if self.hosts:
+                get_hosts = self.verify_IP(self.hosts)
+            else: get_hosts = self.main_interact()
+            if get_hosts == 'break': break
+            elif get_hosts == 'conintue': continue
             ProcessedIPs = self.ProcessIPs(get_hosts)  
             if ProcessedIPs == []:
                 raise Exception("对IP地址处理完毕后未发现存在可使用的合法IP！")
-            for net in ProcessedIPs:
-                info("正在对提交的{!r}进行扫描...".format(net))
-                if not self.manufactor in self.manufactorlist:
-                    warn("设备{!r}所提供的厂商不存在！".format(net))
-                    continue
-                IP_alive = multiple_scan(net) if multiple_scan(net) != [] else None
-                if not IP_alive:
-                    warn("地址/网段{!r}不存在可备份主机, 或者均无法访问！".format(net))
-                    continue
-                else:
-                    info("开始执行备份...")
-                    self.ftpserv_fuc(
-                        ftpuser='pete', ftppass='pete19890813',
-                        ftppath=self.backuppath)
-                    self.backup_fuc(IP_alive)
-                    self.FTP_Proc.terminate()
+            if not self.manufactor in self.manufactorlist:
+                warn("所提供的所属厂商不存在！"); break
+            info("开始执行备份...")
+            self.ftpserv_fuc(
+                ftpuser='pete', ftppass='pete19890813',
+                ftppath=self.backuppath)
+            self.backup_fuc(ProcessedIPs)
+            self.FTP_Proc.terminate()
             break
-    
-    def HCI(self):
-        IP = input("请输入需要备份配置的设备地址 > ")
+
+    def main_interact(self):
+        IP = input("请输入需要备份配置的设备地址/网段 > ")
         if IP == "exit":
             return 'break'
         elif IP == "":
@@ -94,14 +86,42 @@ class unity_backup:
             else: os.system('clear')    
             return 'conintue'
         if re.match(r'(\d{1,3}\.){3}\d{1,3}($|/\d{1,2}$)', IP):
-            self.manufactor = input("该设备所属厂商 > ").upper()
-            self.username = input("用户名: ")
-            self.password = getpass.getpass("密  码: ")
-            return IP
+            detected_IP, _ = self.verify_IP(IP)
+            if _ > 0: return 'conintue'
+            if len(detected_IP) > 1:
+                print(">>> 根据提供的{!r}探测到如下可访问的IP:\n{}".format(
+                    IP, ', '.join(detected_IP)))
+                select_IP = input("\n请输入确认需要备份的设备IP(使用逗号隔开) > ")
+                match_result = re.match(
+                    r'((\d{1,3}\.){3}\d{1,3},\s?)*(\d{1,3}\.){3}(\d{1,3})$', select_IP)
+                split_IP = re.split(r',\s?', select_IP)
+                diff = list(set(select_IP).difference(detected_IP))
+                if match_result and diff != []:
+                    self.manufactor = input("该设备所属厂商 > ").upper()
+                    self.username = input("用户名: ")
+                    self.password = getpass.getpass("密  码: ")
+                    return split_IP
+                else:
+                    print(">>> 输入IP地址错误！'{}'不存在于已扫描到的IP地址中".format(
+                        ', '.join(diff)))
+                    return 'conintue'
+            elif len(detected_IP) == 1:
+                self.manufactor = input("该设备所属厂商 > ").upper()
+                self.username = input("用户名: ")
+                self.password = getpass.getpass("密  码: ")
+                return detected_IP
         else:
             print(">>> 非法IP地址，IP地址书写错误！\n")
             return 'conintue'
-
+    
+    def verify_IP(self, IP):
+        info("正在探测{!r}...".format(IP))
+        IP_alive = multiple_scan(IP) if multiple_scan(IP) != [] else None
+        if not IP_alive:
+            warn("地址/网段{!r}不存在可备份主机, 或者均无法访问！".format(IP))
+            return 'device unaccessable', 1
+        return IP_alive, 0
+        
     def ProcessIPs(self, IPs):
         if isinstance(IPs, str):
             split_symbol = re.search(r'([^\s\.\d/])', IPs)
