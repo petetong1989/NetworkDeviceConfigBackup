@@ -47,8 +47,8 @@ class CiscoDevice(ConnProfile):
         #     return 'Accomplished'
         if 'User:' in prompt[-1]:
             return 'WLC_Login'
-        elif 'Password:' in prompt[-1]:
-            return 'PW_require'
+        # elif 'Password:' in prompt[-1]:
+        #     return 'PW_require'
         elif '/system #' in prompt[-1]:
             return 'UCSM_SysSocpe'
         elif '#' in prompt[-1]:
@@ -211,9 +211,12 @@ class CiscoDevice(ConnProfile):
         self.shell.send(
             'copy running-config ftp://{0}:{1}@{2}/{3} vrf {4}\n'.format(
                 ftpuser, ftppass, FTPaddress, filename, Source))
-        self.addionalPassReuqire(ftppass)
         recv_str = recv_expect(
-            self.shell, r'Successfully|Copy\scomplete|file\saborted')
+            self.shell, r'Successfully|Copy\scomplete|file\saborted|Password:')
+        if re.search(r'Password:', recv_str):
+            self.shell.send(ftppass + '\n')
+            recv_str = recv_expect(
+                self.shell, r'Successfully|Copy\scomplete|file\saborted')
         if re.search(r'Successfully|Copy\scomplete', recv_str):
             return 'BackupSuccess'
         else: return 'BackupFailed'
@@ -229,10 +232,12 @@ class CiscoDevice(ConnProfile):
         self.shell.send(
             'create backup ftp://{0}:{1}@{2}/{3}.xml {4} enabled\n'.format(
                 ftpuser, ftppass, FTPaddress, filename, 'all-configuration'))
-        self.addionalPassReuqire(ftppass)
-        self.shell.send('commit-buffer\n')
-        sleep(1.7); self.shell.send("show fsm status | grep 'Previous Status'\n")
-        recv_str = recv_expect(self.shell, r'Backup\sUpload|Backup\sSuccess')
+        recv_str = recv_expect(self.shell, r'Backup\sUpload|Backup\sSuccess|Password:')
+        if recv_str.find('Password:') > -1:
+            self.shell.send(ftppass + '\n')
+            self.shell.send('commit-buffer\n')
+            sleep(1.7); self.shell.send("show fsm status | grep 'Previous Status'\n")
+            recv_str = recv_expect(self.shell, r'Backup\sUpload|Backup\sSuccess')
         if recv_str.find('Backup Success') > -1:
             return 'BackupSuccess'
         else: return 'BackupFailed'
@@ -252,10 +257,10 @@ class CiscoDevice(ConnProfile):
             return 'BackupSuccess'
         else: return 'BackupFailed'
     
-    def addionalPassReuqire(self, password):
-        self.PromptStaus = self.PromptHandler()
-        if self.PromptStaus == 'PW_require':
-            self.shell.send(password + '\n')
+    # def addionalPassReuqire(self, password):
+    #     self.PromptStaus = self.PromptHandler()
+    #     if self.PromptStaus == 'PW_require':
+    #         self.shell.send(password + '\n')
 
     def FTPBackup(self, FTPaddress, filename, ftpuser, ftppass):
         backupinfo = (FTPaddress, filename, ftpuser, ftppass)
