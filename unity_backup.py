@@ -117,8 +117,8 @@ class unity_backup:
             if match_result and scanning:
                 diff = list(set(split_IP).difference(self.detected_IP))
                 if match_result and not diff:
-                    self.manufactor = input("厂  商 (Manufactor)：").upper()
-                    self.username = input("用户名 (Username)：")
+                    self.manufactor = input("厂  商 (Manufactor): ").upper()
+                    self.username = input("用户名 (Username): ")
                     self.password = getpass.getpass("密  码 (Password): ")
                     return split_IP
                 else:
@@ -126,9 +126,9 @@ class unity_backup:
                         ', '.join(diff)))
                     return 'conintue1', 'scanning'
             elif match_result and not scanning:
-                self.manufactor = input("该设备所属厂商 > ").upper()
-                self.username = input("用户名: ")
-                self.password = getpass.getpass("密  码: ")
+                self.manufactor = input("厂  商 (Manufactor): ").upper()
+                self.username = input("用户名 (Username): ")
+                self.password = getpass.getpass("密  码 (Password): ")
                 return select_IP
             else:
                 print("[-] 非法IP地址，IP地址书写错误！")
