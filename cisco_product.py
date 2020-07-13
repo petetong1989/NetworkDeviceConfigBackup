@@ -36,6 +36,7 @@ class CiscoDevice(ConnProfile):
             self.UCSMhandle = UcsHandle(ip, username, password)
             self.UCSMhandle.login()
         self.temPage_len()
+        self.temWidth()
         self.SCPStatus = False
         self.hostname = self.get_hostname()
     
@@ -110,6 +111,15 @@ class CiscoDevice(ConnProfile):
         elif self.Product == 'Cisco IOS':
             self.shell.send(f'\t\nterminal length {length}\n')
     
+    def temWidth(self, disable=True):
+        width = '500' if disable else '80'
+        if self.Product == 'Cisco ASA':
+            self.shell.send(f'\tconfig t\nterminal width {width}\n')
+        elif self.Product == 'Cisco Nexus':
+            self.shell.send(f'q\nerminal width {width}')
+        elif self.Product == 'Cisco ':
+            self.shell.send(f'\t\nterminal width {width}')
+
     def get_srcport(self):
         if self.Product == 'Cisco ASA':
             self.shell.send('\nshow ip addr\n')
