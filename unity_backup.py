@@ -37,9 +37,9 @@ import os
 
 
 timestamp = strftime("%Y%m%d%H%M%S", localtime(time()))
-dateformat = '%m/%d/%Y %I:%M:%S %p'
+dateformat = '%Y-%m-%d %I:%M:%S %p'
 MessageFormat = '%(asctime)s %(levelname)s: %(message)s'
-logconfig(format=MessageFormat, datefmt=dateformat, level=20)
+# logconfig(format=MessageFormat, datefmt=dateformat, level=20)
 
 
 class unity_backup:
@@ -74,8 +74,8 @@ class unity_backup:
             if ProcessedIPs == []:
                 raise Exception("对IP地址处理完毕后未发现存在可使用的合法IP！")
             if not self.manufactor in self.manufactorlist:
-                warn("所提供的所属厂商不存在！"); break
-            info("开始执行备份...")
+                print("[-] 所提供的所属厂商不存在！"); break
+            print("[+] 开始执行备份...")
             self.ftpserv_fuc(
                 ftpuser='pete', ftppass='pete19890813',
                 ftppath=self.backuppath)
@@ -85,7 +85,7 @@ class unity_backup:
 
     def main_interact(self, startbackup=False, scanning=False, continue1=False):
         if not continue1:
-            IP = input("扫描相应备份设备网段？('skip'跳过) > ")
+            IP = input("扫描相应备份设备网段？(SKIP 跳过) > ")
             if IP == "exit":
                 return 'break'
             elif IP == "":
@@ -117,9 +117,9 @@ class unity_backup:
             if match_result and scanning:
                 diff = list(set(split_IP).difference(self.detected_IP))
                 if match_result and not diff:
-                    self.manufactor = input("该设备所属厂商 > ").upper()
-                    self.username = input("用户名: ")
-                    self.password = getpass.getpass("密  码: ")
+                    self.manufactor = input("厂  商 (Manufactor)：").upper()
+                    self.username = input("用户名 (Username)：")
+                    self.password = getpass.getpass("密  码 (Password): ")
                     return split_IP
                 else:
                     print("[-] 输入IP地址错误！'{}'不存在于已扫描到的IP地址中".format(
@@ -135,10 +135,10 @@ class unity_backup:
                 return 'conintue1'
     
     def verify_IP(self, IP):
-        info("正在探测{!r}...".format(IP))
+        print("[+] 正在探测{!r}...".format(IP))
         IP_alive = multiple_scan(IP) if multiple_scan(IP) != [] else None
         if not IP_alive:
-            warn("地址/网段{!r}不存在可备份主机, 或者均无法访问！".format(IP))
+            print("[-] 地址/网段{!r}不存在可备份主机, 或者均无法访问！".format(IP))
             return 'device unaccessable', 1
         return IP_alive, 0
         
@@ -187,7 +187,7 @@ class unity_backup:
                 'running-config', 
                 '{0}_{1}_{2}'.format(
                     self.Cisco.hostname, host, timestamp))
-            info('设备{!r}备份成功!'.format(host))
+            print('[+] 设备{!r}备份成功!'.format(host))
     
     def Cisco_FTP_backup(self, host):
         self_IP = self.get_selfIP(host)
@@ -198,7 +198,7 @@ class unity_backup:
             self.ftpuser,
             self.ftppass)
         if Status == 'BackupSuccess':
-            info('设备{!r}备份成功!'.format(host))
+            print('[+] 设备{!r}备份成功!'.format(host))
             self.Cisco.temPage_len(False)
         else:
             self.Cisco.temPage_len(False)
@@ -207,7 +207,7 @@ class unity_backup:
     def F5_SFTP_backup(self, host):
         self.F5.SFTPBackup('{0}_{1}_{2}.ucs'.format(
             self.F5.hostname, host, timestamp))
-        info('设备{!r}备份成功!'.format(host))
+        print('[+] 设备{!r}备份成功!'.format(host))
 
     def Broadcom_FTP_backup(self, host):
         self_IP = self.get_selfIP(host)
@@ -216,13 +216,13 @@ class unity_backup:
                 self.Broadcom.hostname, host, timestamp), 
             self.ftpuser, self.ftppass)
         if Status == 'BackupSuccess':
-            info('设备{!r}备份成功!'.format(host))
+            print('[+] 设备{!r}备份成功!'.format(host))
         else:
             raise Exception('备份失败，备份对象内部错误！')
 
     def backup_fuc(self, hosts):
         for host in hosts:
-            info('开始备份设备{!r}'.format(host))
+            print('[+] 开始备份设备{!r}'.format(host))
             try:
                 if self.manufactor == "CISCO":
                     self.Cisco = CiscoDevice(host, self.username, self.password)
@@ -230,7 +230,7 @@ class unity_backup:
                         self.Cisco_SCPAPI_backup(host)
                     except Exception as e:
                         # raise Exception(e)
-                        warn('尝试SCP或API备份失败，开始尝试FTP备份。')
+                        print('[-] 尝试SCP或API备份失败，开始尝试FTP备份。')
                         self.Cisco_FTP_backup(host)
                         continue
                 elif self.manufactor == 'F5':
@@ -241,7 +241,7 @@ class unity_backup:
                     self.Broadcom_FTP_backup(host)
             except Exception as e:
                 # raise Exception
-                error('{!r}备份失败, 错误信息：{}'.format(host, e.args[0]))
+                print('[-] {!r}备份失败, 错误信息：{}'.format(host, e.args[0]))
                 continue
         
 
