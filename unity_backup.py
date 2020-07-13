@@ -77,7 +77,7 @@ class unity_backup:
             break
 
     def main_interact(self, startbackup=False, scanning=False, continue1=False):
-        if continue1:
+        if not continue1:
             IP = input("扫描相应备份设备网段？('skip'跳过) > ")
             if IP == "exit":
                 return 'break'
@@ -107,12 +107,12 @@ class unity_backup:
             match_result = re.match(
                 r'((\d{1,3}\.){3}\d{1,3},\s?)*(\d{1,3}\.){3}(\d{1,3})$', select_IP)
             split_IP = re.split(r',\s?', select_IP)
-            if match_result:
+            if match_result and not scanning:
                 self.manufactor = input("该设备所属厂商 > ").upper()
                 self.username = input("用户名: ")
                 self.password = getpass.getpass("密  码: ")
                 return select_IP
-            elif scanning:
+            elif match_result and scanning:
                 diff = list(set(select_IP).difference(detected_IP))
                 if match_result and diff != []:
                     self.manufactor = input("该设备所属厂商 > ").upper()
