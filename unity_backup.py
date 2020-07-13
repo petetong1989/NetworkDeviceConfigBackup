@@ -62,6 +62,7 @@ class unity_backup:
             else: get_hosts = self.main_interact()
             if get_hosts == 'break': break
             elif get_hosts == 'conintue': continue
+            elif get_hosts == 'conintue': self.main_interact(continue1=True)
             ProcessedIPs = self.ProcessIPs(get_hosts)  
             if ProcessedIPs == []:
                 raise Exception("对IP地址处理完毕后未发现存在可使用的合法IP！")
@@ -75,26 +76,43 @@ class unity_backup:
             self.FTP_Proc.terminate()
             break
 
-    def main_interact(self):
-        IP = input("请输入需要备份配置的设备地址/网段 > ")
-        if IP == "exit":
-            return 'break'
-        elif IP == "":
-            return 'conintue'
-        elif IP == 'clear':
-            if os.name == 'nt': os.system('cls')
-            else: os.system('clear')    
-            return 'conintue'
-        if re.match(r'(\d{1,3}\.){3}\d{1,3}($|/\d{1,2}$)', IP):
-            detected_IP, _ = self.verify_IP(IP)
-            if _ > 0: return 'conintue'
-            if len(detected_IP) > 1:
-                print(">>> 根据提供的{!r}探测到如下可访问的IP:\n{}".format(
-                    IP, ', '.join(detected_IP)))
-                select_IP = input("\n请输入确认需要备份的设备IP(使用逗号隔开) > ")
-                match_result = re.match(
-                    r'((\d{1,3}\.){3}\d{1,3},\s?)*(\d{1,3}\.){3}(\d{1,3})$', select_IP)
-                split_IP = re.split(r',\s?', select_IP)
+    def main_interact(self, startbackup=False, scanning=False, continue1=False):
+        if continue1:
+            IP = input("扫描相应备份设备网段？('skip'跳过) > ")
+            if IP == "exit":
+                return 'break'
+            elif IP == "":
+                return 'conintue'
+            elif IP == 'clear':
+                if os.name == 'nt': os.system('cls')
+                else: os.system('clear')    
+                return 'conintue'
+            elif IP == 'skip':
+                startbackup = True
+            elif re.match(r'(\d{1,3}\.){3}\d{1,3}($|/\d{1,2}$)', IP):
+                detected_IP, _ = self.verify_IP(IP)
+                if _ > 0: return 'conintue'
+                elif len(detected_IP) >= 1:
+                    print(">>> 根据提供的{!r}探测到如下可访问的IP:".format(IP))
+                    from pprint import pprint
+                    pprint(", ".join(detected_IP), compact=True)
+                    startbackup = True
+                    scanning = True
+            else:
+                print(">>> 非法IP地址，IP地址书写错误！\n")
+                return 'conintue'
+        
+        if startbackup or continue1:
+            select_IP = input("\n请输入需要备份的设备IP(多个用','隔开) > ")
+            match_result = re.match(
+                r'((\d{1,3}\.){3}\d{1,3},\s?)*(\d{1,3}\.){3}(\d{1,3})$', select_IP)
+            split_IP = re.split(r',\s?', select_IP)
+            if match_result:
+                self.manufactor = input("该设备所属厂商 > ").upper()
+                self.username = input("用户名: ")
+                self.password = getpass.getpass("密  码: ")
+                return select_IP
+            elif scanning:
                 diff = list(set(select_IP).difference(detected_IP))
                 if match_result and diff != []:
                     self.manufactor = input("该设备所属厂商 > ").upper()
@@ -104,15 +122,10 @@ class unity_backup:
                 else:
                     print(">>> 输入IP地址错误！'{}'不存在于已扫描到的IP地址中".format(
                         ', '.join(diff)))
-                    return 'conintue'
-            elif len(detected_IP) == 1:
-                self.manufactor = input("该设备所属厂商 > ").upper()
-                self.username = input("用户名: ")
-                self.password = getpass.getpass("密  码: ")
-                return detected_IP
-        else:
-            print(">>> 非法IP地址，IP地址书写错误！\n")
-            return 'conintue'
+                    return 'conintue1'
+            else:
+                print(">>> 非法IP地址，IP地址书写错误！\n")
+                return 'conintue1'
     
     def verify_IP(self, IP):
         info("正在探测{!r}...".format(IP))
