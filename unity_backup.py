@@ -57,13 +57,20 @@ class unity_backup:
     
     def unity_process(self):
         while True:
+            count = 3
             if self.hosts:
                 get_hosts = self.verify_IP(self.hosts)
             else: get_hosts = self.main_interact()
             if get_hosts == 'break': break
             elif get_hosts == 'conintue': continue
-            elif get_hosts == 'conintue': self.main_interact(continue1=True)
-            ProcessedIPs = self.ProcessIPs(get_hosts)  
+            while True:
+                if get_hosts == ('conintue1', 'scanning'):
+                    get_hosts = self.main_interact(scanning=True, continue1=True)
+                    if 'conintue1' in get_hosts: continue
+                elif get_hosts == 'conintue1':
+                    get_hosts = self.main_interact(continue1=True)
+                else: break
+            ProcessedIPs = self.ProcessIPs(get_hosts)
             if ProcessedIPs == []:
                 raise Exception("对IP地址处理完毕后未发现存在可使用的合法IP！")
             if not self.manufactor in self.manufactorlist:
@@ -87,44 +94,44 @@ class unity_backup:
                 if os.name == 'nt': os.system('cls')
                 else: os.system('clear')    
                 return 'conintue'
-            elif IP == 'skip':
+            elif re.match(r'skip|SKIP', IP):
                 startbackup = True
             elif re.match(r'(\d{1,3}\.){3}\d{1,3}($|/\d{1,2}$)', IP):
-                detected_IP, _ = self.verify_IP(IP)
+                self.detected_IP, _ = self.verify_IP(IP)
                 if _ > 0: return 'conintue'
-                elif len(detected_IP) >= 1:
-                    print(">>> 根据提供的{!r}探测到如下可访问的IP:".format(IP))
-                    from pprint import pprint
-                    pprint(", ".join(detected_IP), compact=True)
+                elif len(self.detected_IP) >= 1:
                     startbackup = True
                     scanning = True
+                    print("[+] 根据提供的{!r}探测到如下可访问的IP:".format(IP))
+                    from pprint import pprint
+                    pprint(", ".join(self.detected_IP), compact=True)
             else:
-                print(">>> 非法IP地址，IP地址书写错误！\n")
+                print("[-] 检测到非法字符，请重新输入！\n")
                 return 'conintue'
         
         if startbackup or continue1:
             select_IP = input("\n请输入需要备份的设备IP(多个用','隔开) > ")
             match_result = re.match(
                 r'((\d{1,3}\.){3}\d{1,3},\s?)*(\d{1,3}\.){3}(\d{1,3})$', select_IP)
-            split_IP = re.split(r',\s?', select_IP)
-            if match_result and not scanning:
-                self.manufactor = input("该设备所属厂商 > ").upper()
-                self.username = input("用户名: ")
-                self.password = getpass.getpass("密  码: ")
-                return select_IP
-            elif match_result and scanning:
-                diff = list(set(select_IP).difference(detected_IP))
-                if match_result and diff != []:
+            split_IP = re.split(r',\s?|\s', select_IP)
+            if match_result and scanning:
+                diff = list(set(split_IP).difference(self.detected_IP))
+                if match_result and not diff:
                     self.manufactor = input("该设备所属厂商 > ").upper()
                     self.username = input("用户名: ")
                     self.password = getpass.getpass("密  码: ")
                     return split_IP
                 else:
-                    print(">>> 输入IP地址错误！'{}'不存在于已扫描到的IP地址中".format(
+                    print("[-] 输入IP地址错误！'{}'不存在于已扫描到的IP地址中".format(
                         ', '.join(diff)))
-                    return 'conintue1'
+                    return 'conintue1', 'scanning'
+            elif match_result and not scanning:
+                self.manufactor = input("该设备所属厂商 > ").upper()
+                self.username = input("用户名: ")
+                self.password = getpass.getpass("密  码: ")
+                return select_IP
             else:
-                print(">>> 非法IP地址，IP地址书写错误！\n")
+                print("[-] 非法IP地址，IP地址书写错误！")
                 return 'conintue1'
     
     def verify_IP(self, IP):
@@ -247,4 +254,4 @@ if __name__ == "__main__":
         Backup.FTP_Proc.terminate()
         raise Exception(e)
     except KeyboardInterrupt:
-        error("程序被使用'Ctrl+C'强制退出！")
+        print("\n[-] 程序被使用'Ctrl+C'强制退出！")
