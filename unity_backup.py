@@ -39,7 +39,7 @@ import os
 timestamp = strftime("%Y%m%d%H%M%S", localtime(time()))
 dateformat = '%Y-%m-%d %I:%M:%S %p'
 MessageFormat = '%(asctime)s %(levelname)s: %(message)s'
-# logconfig(format=MessageFormat, datefmt=dateformat, level=20)
+logconfig(format=MessageFormat, datefmt=dateformat, level=40)
 
 
 class unity_backup:
@@ -85,7 +85,7 @@ class unity_backup:
 
     def main_interact(self, startbackup=False, scanning=False, continue1=False):
         if not continue1:
-            IP = input("扫描相应备份设备网段？(SKIP 跳过) > ")
+            IP = input("扫描相应备份设备网段？(跳过 SKIP) > ")
             if IP == "exit":
                 return 'break'
             elif IP == "":
@@ -103,8 +103,19 @@ class unity_backup:
                     startbackup = True
                     scanning = True
                     print("[+] 根据提供的{!r}探测到如下可访问的IP:".format(IP))
-                    from pprint import pprint
-                    pprint(", ".join(self.detected_IP), compact=True)
+                    ipcount = 0
+                    for ip in self.detected_IP:
+                        if ip == self.detected_IP[0]:
+                            print(' '*4, end='')
+                        if ip == self.detected_IP[-1]:
+                            print(ip)
+                            break
+                        print(ip + ',', end=' ')
+                        ipcount += 1
+                        if ipcount > 6:
+                            print('\r')
+                            print(' '*4, end='')
+                            ipcount = 0 
             else:
                 print("[-] 检测到非法字符，请重新输入！\n")
                 return 'conintue'
