@@ -29,8 +29,8 @@ Currently supports (当前支持)
 - [x] Cisco NXOS
 - [x] Cisco WLC
 - [x] Cisco IOS
-- [x] Cisco UCS FabricInterconnect
-- [x] F5 LoadeBalance
+- [x] Cisco UCS FI
+- [x] F5 LoadBalance
 - [x] broadcom DS300
 
 # Useage
