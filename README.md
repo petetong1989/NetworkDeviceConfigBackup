@@ -22,7 +22,7 @@ UnityConfigBackup 是用来自动收集多种网络设备的配置, 如果你的
 
 [❗] 注意：不支持`Telnet`连接，仅支持`SSH`连接
 
-> [❗] Notice, Not supports `Telnet` connection, only `SSH` is supporting
+> [❗] Notice ``Not supports `Telnet` connection, only `SSH` is supporting``
 
 Currently supports (当前支持)
 
