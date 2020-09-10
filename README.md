@@ -31,7 +31,7 @@ Currently supports (当前支持)
 - [x] Cisco IOS
 - [x] Cisco UCS FI
 - [x] F5 LoadBalance
-- [x] broadcom DS300
+- [x] Broadcom DS300 FC Switch
 
 # Useage
 
