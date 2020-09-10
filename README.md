@@ -35,9 +35,9 @@ Currently supports (当前支持)
 
 # Useage
 
-请确保你的环境中安装有`Python`
+请确保你的环境中安装有`Python3`
 
-> Make sure that you got `Python` installed.
+> Make sure that you got `Python3` installed.
 
 直接执行`python unity_back.py`进入交互界面。提供界面中需要你输入的信息即可
 
