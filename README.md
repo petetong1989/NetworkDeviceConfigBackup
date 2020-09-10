@@ -14,7 +14,7 @@ UnityConfigBackup 是用来自动收集多种网络设备的配置, 如果你的
 
 2. 通过调用函数`unity_process`函数完成备份过程;
 
-> function `unity_process` gonna help you finish the backup procedure.
+> function `unity_process` gonna help you to finish the backup procedure.
 
 3. 通过调用函数`backup_fuc`来执行备份操作;
 
@@ -35,10 +35,12 @@ Currently supports (当前支持)
 
 # Useage
 
-Make sure that you got `Python` installed.
-
 请确保你的环境中安装有`Python`
 
-Just excute `python unity_back.py` for get in the view of interaction. provide the information with the program request.
+> Make sure that you got `Python` installed.
+
+直接执行`python unity_back.py`进入交互界面。提供界面中需要你输入的信息即可
+
+> Simply excute `python unity_back.py` for get in to the view of interaction. provide the information with the program request.
 
 
