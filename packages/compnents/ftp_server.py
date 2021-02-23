@@ -3,8 +3,9 @@
 # @Author: Pete.Zhangbin
 # @Email: pete19890813@gmail.com
 '''
-This Script is to enable a FTP Server
+FTP Server
 '''
+
 import logging
 import os
 import re
@@ -13,7 +14,6 @@ import getpass
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.servers import ThreadedFTPServer, FTPServer
-
 
 class MyFTPHandler(FTPHandler):
     def on_file_received(self, file):

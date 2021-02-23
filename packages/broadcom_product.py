@@ -7,9 +7,8 @@ Broadcom Product Class
 '''
 
 
-from conn_profile import (ConnProfile, shellrecv, recv_expect)
-import re
-
+from packages import *
+from packages.compnents.conn_profile import (ConnProfile, shellrecv, recv_expect)
 
 class broadcomDevice(ConnProfile):
     def __init__(self, ip, username, password):

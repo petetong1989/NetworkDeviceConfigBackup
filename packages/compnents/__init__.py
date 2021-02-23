@@ -3,7 +3,5 @@
 # @Author: Pete.Zhangbin
 # @Email: pete19890813@gmail.com
 '''
-SCRIPT DESCRIPTION
+init file
 '''
-
-

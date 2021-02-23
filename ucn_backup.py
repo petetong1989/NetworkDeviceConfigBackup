@@ -20,21 +20,15 @@
 Useage:...新人通常不喜欢写过多注释:p
 '''
 
-from time import (time, sleep, strftime, localtime)
-from port_scan import multiple_scan
-from ftp_server import FTP_Server
-from cisco_product import CiscoDevice
-from f5_product import F5Device
-from broadcom_product import broadcomDevice
+from packages.compnents.port_scan import multiple_scan
+from packages.compnents.ftp_server import FTP_Server
+from packages.cisco_product import CiscoDevice
+from packages.f5_product import F5Device
+from packages.broadcom_product import broadcomDevice
 from multiprocessing import Process
-from logging import basicConfig as logconfig
-from logging import warning as warn
-from logging import (info, debug, error)
+from packages import *
 import getpass
 import socket
-import re
-import os
-
 
 timestamp = strftime("%Y%m%d%H%M%S", localtime(time()))
 dateformat = '%Y-%m-%d %I:%M:%S %p'

@@ -6,10 +6,9 @@
 F5 Product Class
 '''
 
-from conn_profile import (ConnProfile, shellrecv, recv_expect)
-from time import sleep
-import re
 
+from packages import *
+from packages.compnents.conn_profile import (ConnProfile, shellrecv, recv_expect)
 
 class F5Device(ConnProfile):
     def __init__(self, host, username, password):

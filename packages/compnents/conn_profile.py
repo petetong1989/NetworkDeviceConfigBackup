@@ -3,15 +3,13 @@
 # @Author: Pete.Zhangbin
 # @Email: pete19890813@gmail.com
 '''
-SCRIPT DESCRIPTION
+ssh_conn_profile
 '''
-
 
 from paramiko.client import (SSHClient, AutoAddPolicy)
 from paramiko import Transport
 from time import (sleep, time)
 import re
-
 
 class ConnProfile:
     def __init__(self, ip, username, password):

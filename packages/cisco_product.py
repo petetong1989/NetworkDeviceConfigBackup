@@ -6,18 +6,8 @@
 Cisco Product Class
 '''
 
-from conn_profile import (ConnProfile, shellrecv, recv_expect)
-from scp import (SCPClient, SCPException)
-from ucsmsdk.ucshandle import UcsHandle
-from ucsmsdk.utils.ucsbackup import backup_ucs
-from time import (time, sleep, strftime, localtime)
-from logging import basicConfig as logconfig
-from logging import warning as warn
-from logging import (info, debug, error)
-import xml.etree.ElementTree as ET
-import re
-import os
-     
+from packages import *
+from packages.compnents.conn_profile import (ConnProfile, shellrecv, recv_expect)
 
 class CiscoDevice(ConnProfile):
     def __init__(self, ip, username, password, Product=None):
