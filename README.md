@@ -1,7 +1,7 @@
 # UCN_Backup
-***
+
 ## Introduction
-***
+
 UnityConfigBackup is used for collect configuration from various network device. You can use it intead ansible. Especially if you collecting within various and smaller number devices, it will be your nightmare.
 
 1. Involve interaction view with function `main_interact`.
@@ -22,7 +22,6 @@ UnityConfigBackup is used for collect configuration from various network device.
 - [x] Broadcom DS300
 
 ## Usage
-***
 
 - Ensure got `Python3` installed.
 
