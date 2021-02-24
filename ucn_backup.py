@@ -40,6 +40,8 @@ logconfig(format=MessageFormat, datefmt=dateformat, level=40)
 def dnsreolve(domainName):
     try:
         master_answer = dnsResolver.resolve(domainName, 'A')
+        if len(master_answer) > 1:
+            return 'failed'
         return master_answer[0].address
     except Exception:
         return 'failed'
@@ -160,7 +162,7 @@ class unity_backup:
                 self.infoGather()
                 return select_IP
             else:
-                print("[-] 非法IP地址，IP地址书写错误！")
+                # print("[-] 非法IP地址，IP地址书写错误！")
                 return 'conintue1'
     
     def verify_IP(self, IP):
