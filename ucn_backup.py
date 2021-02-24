@@ -27,6 +27,7 @@ from packages.f5_product import F5Device
 from packages.broadcom_product import broadcomDevice
 from multiprocessing import Process
 from packages import *
+import dns.resolver as dnsResolver
 import getpass
 import socket
 
@@ -34,6 +35,14 @@ timestamp = strftime("%Y%m%d%H%M%S", localtime(time()))
 dateformat = '%Y-%m-%d %I:%M:%S %p'
 MessageFormat = '%(asctime)s %(levelname)s: %(message)s'
 logconfig(format=MessageFormat, datefmt=dateformat, level=40)
+
+
+def dnsreolve(domainName):
+    try:
+        master_answer = dnsResolver.resolve(domainName, 'A')
+        return master_answer[0].address
+    except Exception:
+        return 'failed'
 
 
 class unity_backup:
@@ -48,6 +57,11 @@ class unity_backup:
             self.hosts = hosts
         self.backuppath = backuppath
         self.manufactorlist = ['CISCO', 'F5', 'BROADCOM']
+
+    def infoGather(self):
+        self.manufactor = input("厂  商 (Manufactor): ").upper()
+        self.username = input("用户名 (Username): ")
+        self.password = getpass.getpass("密  码 (Password): ")
     
     def unity_process(self):
         while True:
@@ -79,11 +93,11 @@ class unity_backup:
 
     def main_interact(self, startbackup=False, scanning=False, continue1=False):
         if not continue1:
-            IP = input("扫描相应备份设备网段？(跳过 SKIP) > ")
+            IP = input("扫描相应备份设备网段？(skip 跳过) > ")
             if IP == "exit":
                 return 'break'
             elif IP == "":
-                return 'conintue'
+                startbackup = True
             elif IP == 'clear':
                 if os.name == 'nt': os.system('cls')
                 else: os.system('clear')    
@@ -115,25 +129,35 @@ class unity_backup:
                 return 'conintue'
         
         if startbackup or continue1:
-            select_IP = input("\n请输入需要备份的设备IP(多个用','隔开) > ")
+            select_IP = input("请输入需要备份的设备IP/FQDN（多个用','隔开） > ")
             match_result = re.match(
                 r'((\d{1,3}\.){3}\d{1,3},\s?)*(\d{1,3}\.){3}(\d{1,3})$', select_IP)
             split_IP = re.split(r',\s?|\s', select_IP)
+            
+            if not match_result:
+                split_domains = split_IP
+                IPs = []
+                for domain in split_domains:
+                    ipaddress = dnsreolve(domain)
+                    if ipaddress == 'failed':
+                        print('[-] DNS解析失败！可能是非法字符或者这个域名不存在！')
+                        break
+                    IPs.append(ipaddress)
+                if IPs != []:
+                    self.infoGather()
+                    return IPs
+
             if match_result and scanning:
                 diff = list(set(split_IP).difference(self.detected_IP))
                 if match_result and not diff:
-                    self.manufactor = input("厂  商 (Manufactor): ").upper()
-                    self.username = input("用户名 (Username): ")
-                    self.password = getpass.getpass("密  码 (Password): ")
+                    self.infoGather()
                     return split_IP
                 else:
                     print("[-] 输入IP地址错误！'{}'不存在于已扫描到的IP地址中".format(
                         ', '.join(diff)))
                     return 'conintue1', 'scanning'
             elif match_result and not scanning:
-                self.manufactor = input("厂  商 (Manufactor): ").upper()
-                self.username = input("用户名 (Username): ")
-                self.password = getpass.getpass("密  码 (Password): ")
+                self.infoGather()
                 return select_IP
             else:
                 print("[-] 非法IP地址，IP地址书写错误！")

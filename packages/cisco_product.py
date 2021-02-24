@@ -213,6 +213,7 @@ class CiscoDevice(ConnProfile):
                 ftpuser, ftppass, FTPaddress, filename, Source))
         recv_str = recv_expect(
             self.shell, r'Successfully|Copy\scomplete|file\saborted|Password:')
+        print(recv_str)
         if re.search(r'Password:', recv_str):
             self.shell.send(ftppass + '\n')
             recv_str = recv_expect(
