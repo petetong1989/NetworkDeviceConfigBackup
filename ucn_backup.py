@@ -59,9 +59,10 @@ class unity_backup:
         self.manufactorlist = ['CISCO', 'F5', 'BROADCOM']
 
     def infoGather(self):
-        self.manufactor = input("厂  商 (Manufactor): ").upper()
-        self.username = input("用户名 (Username): ")
-        self.password = getpass.getpass("密  码 (Password): ")
+        print('\n', end='')
+        self.manufactor = input("设备所属厂商: ").upper()
+        self.username = input("用户名: ")
+        self.password = getpass.getpass("密  码: ")
     
     def unity_process(self):
         while True:
@@ -93,7 +94,7 @@ class unity_backup:
 
     def main_interact(self, startbackup=False, scanning=False, continue1=False):
         if not continue1:
-            IP = input("扫描设备所在网段？输入SKIP或直接回车跳过 > ")
+            IP = input("扫描设备所在网段？输入SKIP或回车跳过 > ")
             if IP == "exit":
                 return 'break'
             elif IP == "":
@@ -129,7 +130,7 @@ class unity_backup:
                 return 'conintue'
         
         if startbackup or continue1:
-            select_IP = input("配置备份设备的IP/FQDN（使用英文逗号隔开）> ")
+            select_IP = input("需要备份配置设备的IP/FQDN（使用英文逗号分隔）> ")
             match_result = re.match(
                 r'((\d{1,3}\.){3}\d{1,3},\s?)*(\d{1,3}\.){3}(\d{1,3})$', select_IP)
             split_IP = re.split(r',\s?|\s', select_IP)
