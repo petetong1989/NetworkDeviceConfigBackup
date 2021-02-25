@@ -49,7 +49,7 @@ class unity_backup:
     def __init__(self, *hosts, backuppath='.'):
         if not isinstance(hosts, (tuple, list)) \
             or not isinstance(backuppath, str):
-            raise ValueError("某个给定的选项类型错误，请更正")
+            raise ValueError("传入参数类型错误，请更正")
         if hosts:
             self.hosts, self.manufactor, self.username, self.password = hosts
             self.manufactor.upper()
@@ -81,7 +81,7 @@ class unity_backup:
                 else: break
             ProcessedIPs = self.ProcessIPs(get_hosts)
             if ProcessedIPs == []:
-                raise Exception("对IP地址处理完毕后未发现存在可使用的合法IP！")
+                raise Exception("不存在可使用的合法IP！")
             if not self.manufactor in self.manufactorlist:
                 print("[-] 所提供的所属厂商不存在！"); break
             print("[+] 开始执行备份...")
@@ -141,8 +141,8 @@ class unity_backup:
                 for domain in split_domains:
                     ipaddress = dnsreolve(domain)
                     if ipaddress == 'failed':
-                        print('[-] DNS解析失败！可能是非法字符或者这个域名不存在！')
-                        break
+                        print('[-] DNS解析失败，非法字符或域名不存在！')
+                        continue
                     IPs.append(ipaddress)
                 if IPs != []:
                     self.infoGather()
@@ -168,7 +168,7 @@ class unity_backup:
         print("[+] 正在探测{!r}...".format(IP))
         IP_alive = multiple_scan(IP) if multiple_scan(IP) != [] else None
         if not IP_alive:
-            print("[-] 地址/网段{!r}不存在可备份主机, 或者均无法访问！".format(IP))
+            print("[-] 地址/网段{!r}不存在可通过SSH访问的设备".format(IP))
             return 'device unaccessable', 1
         return IP_alive, 0
         
@@ -178,7 +178,7 @@ class unity_backup:
             IPs = IPs.replace(' ', '').split(split_symbol.group())\
             if split_symbol else IPs.split()
         elif not isinstance(IPs, list):
-            raise ValueError('某个给定的选项类型错误，请更正!')
+            raise ValueError('传入参数错误，请更正!')
         for IP in IPs:
             Pattern = r'(2[0-5][0-4]|1\d\d|\d\d|[0-9])'
             type_A = r'10\.{0}\.{0}\.{0}/?\d?\d?'.format(Pattern)
