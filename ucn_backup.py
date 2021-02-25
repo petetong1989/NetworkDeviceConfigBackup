@@ -93,7 +93,7 @@ class unity_backup:
 
     def main_interact(self, startbackup=False, scanning=False, continue1=False):
         if not continue1:
-            IP = input("扫描相应备份设备网段？(skip 跳过) > ")
+            IP = input("扫描设备所在网段？输入SKIP或直接回车跳过 > ")
             if IP == "exit":
                 return 'break'
             elif IP == "":
@@ -110,7 +110,7 @@ class unity_backup:
                 elif len(self.detected_IP) >= 1:
                     startbackup = True
                     scanning = True
-                    print("[+] 根据提供的{!r}探测到如下可访问的IP:".format(IP))
+                    print("[+] 根据{!r}探测到如下可访问的IP:".format(IP))
                     ipcount = 0
                     for ip in self.detected_IP:
                         if ip == self.detected_IP[0]:
@@ -129,7 +129,7 @@ class unity_backup:
                 return 'conintue'
         
         if startbackup or continue1:
-            select_IP = input("请输入需要备份的设备IP/FQDN（多个用','隔开） > ")
+            select_IP = input("配置备份设备的IP/FQDN（使用英文逗号隔开）> ")
             match_result = re.match(
                 r'((\d{1,3}\.){3}\d{1,3},\s?)*(\d{1,3}\.){3}(\d{1,3})$', select_IP)
             split_IP = re.split(r',\s?|\s', select_IP)
@@ -283,4 +283,4 @@ if __name__ == "__main__":
         Backup.FTP_Proc.terminate()
         raise Exception(e)
     except KeyboardInterrupt:
-        print("\n[-] 程序被使用'Ctrl+C'强制退出！")
+        print("\n[-] 程序被手动强制退出！")
