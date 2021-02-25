@@ -13,11 +13,9 @@
 注意事项：
 # 未对 telnet 进行支持
 # 目前支持：
-    思科设备(思科IOS，WLC，NEXUS，ASA以及UCS FI)，
-    F5(测试型号F5 BIGIP 3900，版本号11.5.1)，
-    博科FC交换机(测试型号DS-300， 版本号Fabric OS v6.3.2b)
-
-Useage:...新人通常不喜欢写过多注释:p
+- 思科设备(思科IOS，WLC，NEXUS，ASA以及UCS FI)，
+- F5(测试型号F5 BIGIP 3900，版本号11.5.1)，
+- 博科FC交换机(测试型号DS-300， 版本号Fabric OS v6.3.2b)
 '''
 
 from packages.compnents.port_scan import multiple_scan
