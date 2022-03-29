@@ -1,4 +1,4 @@
 dnspython==2.1.0
-paramiko==2.7.2
+paramiko==2.10.1
 scp==0.13.3
 ucsmsdk==0.9.10
